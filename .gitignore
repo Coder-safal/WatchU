@@ -1,0 +1,11 @@
+.env
+node_modules/
+*.log
+.DS_Store
+coverage/
+dist/
+logs/
+.vscode/
+.idea/
+.prettierignore
+.prettierrc
