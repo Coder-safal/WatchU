@@ -29,25 +29,39 @@ const userSchema = new mongoose.Schema(
             type: String,
             // required: true,
         },
-        is2Fa: {
-            type: Boolean,
-            default: false,
-        },
         role: {
             type: String,
             enum: ['admin', 'employee'],
             default: 'admin'
-        },
-        settings: {
-            // 
         },
         status: {
             type: String,
             emum: ['active'],
             default: 'active'
         },
+        postion: { //employe
+            type: String,
+        },
+        dateJoined: {
+            type: Date,
+            default: new Date(),
+        },
+        hourlyRate: {
+            type: Number,
+            default: 0,
+
+        },
+        adminId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null,
+        },
 
         metaData: {
+            totalEmployeCount: {
+                type: Number,
+                default: 0,
+            }
 
         }
     },
@@ -76,6 +90,7 @@ userSchema.methods = {
     generateAuthToken: function () {
         return jwt.sign({
             _id: this._id,
+            adminId: this.adminId,
             role: this.role,
         },
             process.env.JWT_SECRET,

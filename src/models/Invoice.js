@@ -37,7 +37,7 @@ const invoiceSchema = new mongoose.Schema(
         },
         paymentStatus: {
             type: String,
-            enum: ['pending', 'completed', 'failed', 'cancelled']
+            enum: ['paid', 'unpaid']
         },
 
     }

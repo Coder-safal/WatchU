@@ -5,7 +5,7 @@ const crypto = require("crypto");
 
 class UserService {
 
-    invite = async ({ email, fullName, role, inviteByRole }) => {
+    invite = async ({ email, fullName, role, inviteByRole, position, hourlyRate }) => {
 
         if (!this.allowedInvite({ role, inviteByRole })) {
             throw new ApiError(403, "Permission denied!");
@@ -23,7 +23,9 @@ class UserService {
             role,
             fullName,
             password: randomPassword,
+            adminId,
             isEmailVerified: true,
+            hourlyRate,
         });
 
         if (!user) {

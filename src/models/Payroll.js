@@ -3,9 +3,14 @@ const mongoose = require("mongoose");
 
 const payrollSchema = new mongoose.Schema(
     {
-        invoiceId: {
+        adminId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Invoice",
+            ref: "User",
+            required: true,
+        },
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
             required: true,
         },
         payPeriod: String,
@@ -46,7 +51,7 @@ payrollSchema.statics = {
 
         const Invoice = mongoose.model('Invoice');
 
-        
+
 
 
 

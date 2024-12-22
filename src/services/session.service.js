@@ -4,7 +4,7 @@ const Sessions = require("../models/Sessions");
 
 class SessionService {
 
-    startSession = async ({ userId, adminId }) => {
+    startSession = async ({ _id: userId, adminId }) => {
         const user = await User.findById(userId);
 
         if (!user) {
@@ -34,21 +34,35 @@ class SessionService {
         return session;
     }
 
-    stopSession = async ({ adminId, userId }) => {
+    stopSession = async (sessionId) => {
         const session = await Sessions.findOne({ adminId, userId, status: 'active' });
 
         if (!session) {
             throw new ApiError(400, "Active session isn't found!");
         }
         session.status = 'completed';
+
         session.endTime = new Date();
+
+        session.updateSession();
 
         await session.save();
         return session;
     }
 
-    updateSession = async () => {
+    updateSession = async ({ sessionId }) => {
 
+        const session = await Sessions.findOne({ sessionId, status: 'active' });
+
+        if (!session) {
+            throw new ApiError(404, "Session isn't found or not active");
+        }
+
+        await session.updateSession();
+
+        await session.save();
+
+        return session;
     }
 
     getSessionDetails = async ({ userId, adminId }) => {

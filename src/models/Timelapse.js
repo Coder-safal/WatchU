@@ -9,7 +9,7 @@ const timelapseSchema = new mongoose.Schema(
             ref: "Session",
             required: true,
         },
-        startTime: {
+        startTime: { //video ko startTime
             type: Date,
             required: true,
         },
