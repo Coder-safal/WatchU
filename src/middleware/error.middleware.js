@@ -1,9 +1,11 @@
 //defining error middleware
 
+const logger = require("../config/logger");
 const ApiError = require("../utils/apierror.utils");
 
 const errorMiddleware = (err, req, res, next) => {
-    console.log(err);
+    // logger.info(err);
+    logger.error(err);
     let error = { ...err };
     error.message = err.message;
     if (err.name === 'CastError') {
