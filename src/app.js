@@ -12,12 +12,7 @@ const path = require("path");
 // Enable trust proxy to handle 'X-Forwarded-For' headers correctly
 app.set('trust proxy', true);
 // Security middleware
-app.use(helmet());
-app.use(cors({
-    origin: process.env.NODE_ENV === 'production'
-        ? process.env.ALLOWED_ORIGINS?.split(',')
-        : '*'
-}));
+
 
 // security middleware
 app.use(cors());// Security middleware
@@ -29,10 +24,10 @@ app.use(cors({
 }));
 
 // Rate limiting
-const limiter = rateLimit({
-    windowMs: process.env.RATE_LIMIT_WINDOW * 60 * 1000,
-    max: process.env.RATE_LIMIT_MAX
-});
+// const limiter = rateLimit({
+//     windowMs: process.env.RATE_LIMIT_WINDOW * 60 * 1000,
+//     max: process.env.RATE_LIMIT_MAX
+// });
 
 app.use('/api/', limiter);
 
