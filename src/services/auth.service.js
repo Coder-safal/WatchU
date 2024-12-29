@@ -61,7 +61,7 @@ class AuthService {
             return;
         } catch (error) {
             if (error instanceof ApiError) {
-                throw error;
+                next(error);
             }
             throw new ApiError(500, error.message || "An error occurred while creating the user.");
         }
@@ -150,8 +150,6 @@ class AuthService {
             }
             const min = 2;
 
-            // const token = this.generateRandomPassword();
-            console.log("Hello my check!");
             const token = user.generateResetToken();
 
             await TokenReset.create({
@@ -178,7 +176,7 @@ class AuthService {
             return;
         } catch (error) {
             // throw new ApiError(500, "Internal Error");
-            throw error;
+            next(error);
         }
 
 
@@ -209,7 +207,7 @@ class AuthService {
 
             return;
         } catch (error) {
-            throw error;
+            next(error);
         }
 
 
@@ -233,7 +231,7 @@ class AuthService {
                 token: user.generateAuthToken()
             }
         } catch (error) {
-            throw new ApiError(401, "Invalid refreshToken!");
+            next(error);
         }
 
     }

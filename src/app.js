@@ -10,7 +10,7 @@ const errorMiddleware = require("./middleware/error.middleware");
 const path = require("path");
 
 // Enable trust proxy to handle 'X-Forwarded-For' headers correctly
-app.set('trust proxy', false);
+app.set('trust proxy', true);
 // Security middleware
 app.use(helmet());
 app.use(cors({
