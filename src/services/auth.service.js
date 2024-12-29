@@ -5,10 +5,11 @@ const TokenReset = require("../models/TokenReset")
 const { sendEmail } = require("../config/email");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const Organization = require("../models/Organization");
 // const crypto = require("crypto");
 
 class AuthService {
-    register = async ({ fullName, email, password }) => {
+    register = async ({ fullName, email, password, companyName }) => {
         try {
 
 
@@ -17,11 +18,20 @@ class AuthService {
                 throw new ApiError(409, "Users already exists!");
             }
 
+            const organization = await Organization.create({
+                name: companyName,
+            });
+
+
             const user = await User.create({
                 email,
                 fullName,
                 password,
+                organizationId: organization?._id,
             });
+
+            organization.ownerId = user?._id;
+            await organization.save();
 
             const token = user.generateResetToken();
 
@@ -118,14 +128,12 @@ class AuthService {
     }
 
     login = async ({ email, password }) => {
-        const user = await User.findOne({ email });
-        if (!user?.isEmailVerified) {
-            throw new ApiError(401, "Email isn't verified, Please verify your email before proceeding");
-        }
+        const user = await User.findOne({ email }).select("+password");
 
-        if (!user || !user?.comparePassword(password)) {
-            throw new ApiError(401, "Invalid credentials!");
-        }
+        if (!user) throw new ApiError(401, "Invalid credentials!");
+        if (!user?.isEmailVerified) throw new ApiError(401, "Email isn't verified, Please verify your email before proceeding");
+        if (!(await user.comparePassword(password))) throw new ApiError(400, "Invalid credential!");
+
 
         return {
             token: user?.generateAuthToken(),
@@ -144,6 +152,7 @@ class AuthService {
             const min = 2;
 
             // const token = this.generateRandomPassword();
+            console.log("Hello my check!");
             const token = user.generateResetToken();
 
             await TokenReset.create({
@@ -169,7 +178,8 @@ class AuthService {
 
             return;
         } catch (error) {
-            throw new ApiError(500, "Internal Error");
+            // throw new ApiError(500, "Internal Error");
+            throw error;
         }
 
 

@@ -19,7 +19,9 @@ class SessionController {
 
     stopSession = asyncHandler(async (req, res) => {
 
-        const result = await sessionService.stopSession({ ...req.params });
+        const { _id: userId, adminId } = req?.user;
+        const sessionId = req.params;
+        const result = await sessionService.stopSession((userId, adminId, sessionId));
 
         return res.status(200).json(new ApiResponse(200, "Session stop succesfully!", result));
     });

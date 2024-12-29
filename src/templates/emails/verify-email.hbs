@@ -4,6 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    {{!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" /> --}}
+
     <title>Email Verification</title>
     <style>
         body {
@@ -100,14 +105,20 @@
             <p>&copy; {{currYear}} @{{companyName}}. All rights reserved.</p>
 
             <div class="social-icons">
-                <a href="#" target="_blank">
-                    <img src="/api/placeholder/30/30" alt="Facebook">
+                <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
+                    {{!-- <i class="fab fa-facebook"></i> --}}
+                    <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.FQYyu80e7eHzc3lbL4BzBQHaHY%26pid%3DApi&f=1&ipt=04abbc639887a101a17f785e8a597a41050b56e7b20eb38004f78139138ef51d&ipo=images"
+                        alt="facebook" srcset="">
                 </a>
-                <a href="#" target="_blank">
-                    <img src="/api/placeholder/30/30" alt="LinkedIn">
+                <a href="https://www.linkedin.com/in/your-profile" target="_blank" rel="noopener noreferrer">
+                    {{!-- <i class="fab fa-linkedin"></i> --}}
+                    <img src="https://freelogopng.com/images/all_img/1656996524linkedin-app-icon.png" alt="Linkedin"
+                        srcset="">
                 </a>
-                <a href="#" target="_blank">
-                    <img src="/api/placeholder/30/30" alt="GitHub">
+                <a href="https://github.com/your-profile" target="_blank" rel="noopener noreferrer">
+                    {{!-- <i class="fab fa-github"></i> --}}
+                    <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flogos-world.net%2Fwp-content%2Fuploads%2F2020%2F11%2FGitHub-Logo.png&f=1&nofb=1&ipt=1e1b5ebe458ce16ced3370f62a6501f558d6fb3e53f592f0f300b3ecb96e17ac&ipo=images"
+                        alt="Github" srcset="">
                 </a>
             </div>
         </div>

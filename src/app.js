@@ -7,6 +7,7 @@ const router = require("./routes/index");
 const app = express();
 const logger = require("./config/logger");
 const errorMiddleware = require("./middleware/error.middleware");
+const path = require("path");
 // Security middleware
 app.use(helmet());
 app.use(cors({
@@ -35,6 +36,7 @@ app.use('/api/', limiter);
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(compression());
 
 // Request logging

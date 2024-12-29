@@ -14,18 +14,22 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
-            select: false,
         },
         password: {
             type: String,
             required: true,
             select: false,
         },
+        organizationId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Organization",
+            required: true,
+        },
         isEmailVerified: {
             type: Boolean,
             default: false,
         },
-        department: {
+        project: {
             type: String,
             // required: true,
         },
@@ -41,6 +45,7 @@ const userSchema = new mongoose.Schema(
         },
         postion: { //employe
             type: String,
+            // required: true,
         },
         dateJoined: {
             type: Date,
@@ -51,19 +56,6 @@ const userSchema = new mongoose.Schema(
             default: 0,
 
         },
-        adminId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            default: null,
-        },
-
-        metaData: {
-            totalEmployeCount: {
-                type: Number,
-                default: 0,
-            }
-
-        }
     },
     {
         timestamps: true,
@@ -84,13 +76,13 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods = {
     comparePassword: async function (password) {
-        return await bcryptjs.compare(password, this.password);
+        return await bcryptjs.compare(password, this?.password);
     },
 
     generateAuthToken: function () {
         return jwt.sign({
             _id: this._id,
-            adminId: this.adminId,
+            organizationId: this?.organizationId,
             role: this.role,
         },
             process.env.JWT_SECRET,

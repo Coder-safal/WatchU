@@ -1,6 +1,7 @@
 const ApiError = require("../utils/apierror.utils");
 const User = require("../models/User");
 const Sessions = require("../models/Sessions");
+const Payroll = require("../models/Payroll");
 
 class SessionService {
 
@@ -34,19 +35,21 @@ class SessionService {
         return session;
     }
 
-    stopSession = async (sessionId) => {
+    stopSession = async (userId, adminId, sessionId) => {
         const session = await Sessions.findOne({ adminId, userId, status: 'active' });
 
         if (!session) {
-            throw new ApiError(400, "Active session isn't found!");
+            throw new ApiError(400, "Active session isn't found or isn't active!");
         }
         session.status = 'completed';
 
         session.endTime = new Date();
 
         session.updateSession();
-
         await session.save();
+
+        await Payroll.updatePayroll(userId, adminId, sessionId)
+
         return session;
     }
 

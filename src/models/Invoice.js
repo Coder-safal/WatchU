@@ -1,6 +1,13 @@
+// kollai kati kam garyo, ani kati tirna parxa
+// paid na huda samma invoice calculate garne
+
+/* 
+
+invoices = filter(invoice,where status=="unpaid")
+invoices.workinghours.upadte(old_hour+today_hour)
+*/
 
 const mongoose = require("mongoose");
-
 
 const invoiceSchema = new mongoose.Schema(
     {
@@ -42,6 +49,8 @@ const invoiceSchema = new mongoose.Schema(
 
     }
 );
+
+
 
 invoiceSchema.index({ invoiceNumber: 1 });
 

@@ -7,9 +7,10 @@ class ScrenshotController {
 
     uploadScreenshot = asyncHandler(async (req, res) => {
 
-        const result = await screenshotService.uploadScreenshot({ ...req?.file });
+        const { sessionId } = req.params;
+        const result = await screenshotService.uploadScreenshot(req?.file, sessionId, req.user?._id);
 
-        return res.status(200).json(new ApiResponse(200, "Screenshoot uploaded succesfully!"));
+        return res.status(200).json(new ApiResponse(200, "Screenshoot uploaded succesfully!", result));
 
     });
 
@@ -20,6 +21,8 @@ class ScrenshotController {
         return res.status(200).json(new ApiResponse(200, "All screenshot of this session is fetch succesfully!", result));
 
     });
+
+
 
 
 

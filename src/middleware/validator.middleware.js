@@ -13,6 +13,7 @@ const userValidation = {
                 .withMessage('Name is required field')
                 .isLength({ min: 3 })
                 .withMessage("name must contain at least 3 character"),
+            body('companyName').notEmpty().withMessage('Company Name is required!'),
             validate
         ],
 
@@ -45,10 +46,19 @@ const userValidation = {
     changePassword: [
         body('newPassword')
             .isLength({ min: 8 })
-            .withMessage('Password must be at least 8 characters long')
+            .withMessage('new Password must be at least 8 characters long')
             .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/)
             .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
-        body('oldPassword'),
+        body('confirmPassword')
+            .notEmpty()
+            .withMessage('Confirm Password cannot be empty.')
+            .custom((value, { req }) => {
+                if (value !== req.body.newPassword) {
+                    throw new Error('new-Passwords and confirm-password do not match.');
+                }
+                return true;
+            }),
+        body('oldPassword').isLength({ min: 8 }).withMessage(""),
         validate
     ],
     verifyEmail: [],
@@ -56,9 +66,10 @@ const userValidation = {
         body('email').isEmail().withMessage("Invalid Email"),
         body('role').notEmpty().withMessage('role is required').isIn(['employee'])
             .withMessage('Invalid role,must be either manager or employee'),
-        body('name').notEmpty()
+        body('fullName').notEmpty()
             .withMessage("name is required")
-            .isLength({ min: 3 }).withMessage("Name must contain at least 3 character")
+            .isLength({ min: 3 }).withMessage("Name must contain at least 3 character"),
+        body('position').notEmpty().withMessage("position is required!"),
     ],
     refreshToken: []
 
