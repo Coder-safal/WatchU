@@ -29,7 +29,7 @@ app.use(cors({
 //     max: process.env.RATE_LIMIT_MAX
 // });
 
-app.use('/api/', limiter);
+// app.use('/api/', limiter);
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
