@@ -12,7 +12,6 @@ class AuthService {
     register = async ({ fullName, email, password, companyName }) => {
         try {
 
-
             const existUser = await User.findOne({ email });
             if (existUser) {
                 throw new ApiError(409, "Users already exists!");
@@ -42,7 +41,7 @@ class AuthService {
                 userId: user?._id,
                 expiryAt: new Date(Date.now() + minutes * 60 * 1000)
             })
-            console.log("Token saved successfully. Sending email...");
+            // console.log("Token saved successfully. Sending email...");
 
             const currYear = new Date().getFullYear();
 

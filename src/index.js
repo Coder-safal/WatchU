@@ -19,6 +19,7 @@ const initilize = async () => {
 
     app.listen(PORT, () => {
         logger.info(`Server running on ${PORT} in ${process.env.NODE_ENV} mode`)
+        console.log("Server is running at port ", PORT);
     })
 }
 

@@ -1,24 +1,39 @@
-const { createLogger, format, transports } = require("winston");
-const { combine, timestamp, json, colorize } = format;
+const winston = require('winston');
+const path = require('path');
 
-// Custom format for console logging with colors
-const consoleLogFormat = format.combine(
-    format.colorize(),
-    format.printf(({ level, message, timestamp }) => {
-        return `${level}: ${message}`;
+const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || 'info',
+  format: winston.format.combine(
+    winston.format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }),
+    winston.format.errors({ stack: true }),
+    winston.format.splat(),
+    winston.format.json()
+  ),
+  defaultMeta: { service: 'time-tracking' },
+  transports: [
+    new winston.transports.File({
+      filename: path.join('logs', 'error.log'),
+      level: 'error',
+      maxsize: 5242880, // 5MB
+      maxFiles: 5
+    }),
+    new winston.transports.File({
+      filename: path.join('logs', 'combined.log'),
+      maxsize: 5242880,
+      maxFiles: 5
     })
-);
-
-// Create a Winston logger
-const logger = createLogger({
-    level: "info",
-    format: combine(colorize(), timestamp(), json()),
-    transports: [
-        new transports.Console({
-            format: consoleLogFormat,
-        }),
-        new transports.File({ filename: "app.log" }),
-    ],
+  ]
 });
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.simple()
+    )
+  }));
+}
 
 module.exports = logger;

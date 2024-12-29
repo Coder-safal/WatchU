@@ -20,10 +20,19 @@ app.use(cors({
         : '*'
 }));
 
+// security middleware
+app.use(cors());// Security middleware
+app.use(helmet());
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production'
+        ? process.env.ALLOWED_ORIGINS?.split(',')
+        : '*'
+}));
+
 // Rate limiting
 const limiter = rateLimit({
-    windowMs: (process.env.RATE_LIMIT_WINDOW || 15) * 60 * 1000, // Default to 15 minutes
-    max: process.env.RATE_LIMIT_MAX || 100, // Default to 100 requests per window
+    windowMs: process.env.RATE_LIMIT_WINDOW * 60 * 1000,
+    max: process.env.RATE_LIMIT_MAX
 });
 
 app.use('/api/', limiter);
@@ -37,8 +46,8 @@ app.use(compression());
 // Request logging
 app.use((req, res, next) => {
     logger.info(`${req.method} ${req.originalUrl}`, {
-        ip: req.ip, // This will now use the correct client IP
-        userAgent: req.get('user-agent'),
+        ip: req.ip,
+        userAgent: req.get('user-agent')
     });
     next();
 });
