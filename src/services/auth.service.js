@@ -10,61 +10,55 @@ const Organization = require("../models/Organization");
 
 class AuthService {
     register = async ({ fullName, email, password, companyName }) => {
-        try {
 
-            const existUser = await User.findOne({ email });
-            if (existUser) {
-                throw new ApiError(409, "Users already exists!");
-            }
-
-            const organization = await Organization.create({
-                name: companyName,
-            });
-
-
-            const user = await User.create({
-                email,
-                fullName,
-                password,
-                organizationId: organization?._id,
-            });
-
-            organization.ownerId = user?._id;
-            await organization.save();
-
-            const token = user.generateResetToken();
-
-            const minutes = 2;
-
-            await TokenEmail.create({
-                token,
-                userId: user?._id,
-                expiryAt: new Date(Date.now() + minutes * 60 * 1000)
-            })
-            // console.log("Token saved successfully. Sending email...");
-
-            const currYear = new Date().getFullYear();
-
-            await sendEmail({
-                to: email,
-                subject: 'Verify Email',
-                template: 'verify-email',
-                data: {
-                    expiryIn: minutes,
-                    currYear,
-                    companyName: 'Brand Builder',
-                    token,
-                }
-            });
-
-
-            return;
-        } catch (error) {
-            if (error instanceof ApiError) {
-                next(error);
-            }
-            throw new ApiError(500, error.message || "An error occurred while creating the user.");
+        const existUser = await User.findOne({ email });
+        if (existUser) {
+            throw new ApiError(409, "Users already exists!");
         }
+
+        const organization = await Organization.create({
+            name: companyName,
+        });
+
+
+        const user = await User.create({
+            email,
+            fullName,
+            password,
+            organizationId: organization?._id,
+        });
+
+        organization.ownerId = user?._id;
+        await organization.save();
+
+        const token = user.generateResetToken();
+
+        const minutes = 2;
+
+        await TokenEmail.create({
+            token,
+            userId: user?._id,
+            expiryAt: new Date(Date.now() + minutes * 60 * 1000)
+        })
+        // console.log("Token saved successfully. Sending email...");
+
+        const currYear = new Date().getFullYear();
+
+        await sendEmail({
+            to: email,
+            subject: 'Verify Email',
+            template: 'verify-email',
+            data: {
+                expiryIn: minutes,
+                currYear,
+                companyName: 'Brand Builder',
+                token,
+            }
+        });
+
+
+        return;
+
     }
 
     emailVerify = async (token) => {
@@ -143,95 +137,79 @@ class AuthService {
 
     forgetPassword = async ({ email }) => {
 
-        try {
-            const user = await User.findOne({ email });
-            if (!user || !user?.isEmailVerified) {
-                throw new ApiError(400, "Invalid credentials or Email isn't verify");
-            }
-            const min = 2;
-
-            const token = user.generateResetToken();
-
-            await TokenReset.create({
-                token,
-                userId: user?._id,
-                expiryAt: new Date(Date.now() + min * 60 * 1000)
-            });
-
-
-            const currYear = new Date().getFullYear();
-
-            await sendEmail({
-                to: email,
-                subject: 'Reset Password',
-                template: 'forget-password',
-                data: {
-                    expiryIn: min,
-                    currYear,
-                    companyName: 'Brand Builder',
-                    token,
-                }
-            });
-
-            return;
-        } catch (error) {
-            // throw new ApiError(500, "Internal Error");
-            next(error);
+        const user = await User.findOne({ email });
+        if (!user || !user?.isEmailVerified) {
+            throw new ApiError(400, "Invalid credentials or Email isn't verify");
         }
+        const min = 2;
+
+        const token = user.generateResetToken();
+
+        await TokenReset.create({
+            token,
+            userId: user?._id,
+            expiryAt: new Date(Date.now() + min * 60 * 1000)
+        });
 
 
+        const currYear = new Date().getFullYear();
+
+        await sendEmail({
+            to: email,
+            subject: 'Reset Password',
+            template: 'forget-password',
+            data: {
+                expiryIn: min,
+                currYear,
+                companyName: 'Brand Builder',
+                token,
+            }
+        });
+
+        return;
     }
 
     resetPassword = async ({ token, password }) => {
-        try {
 
-            const hashToken = crypto.createHash('sha256').update(token).digest('hex');
+        const hashToken = crypto.createHash('sha256').update(token).digest('hex');
 
-            const tokenUser = await TokenReset.findOne({ token: hashToken })
+        const tokenUser = await TokenReset.findOne({ token: hashToken })
 
-            if (!tokenUser) {
-                throw new ApiError(400, "Invalid Token or expiry token!");
-            }
-
-
-            const user = await User.findById(tokenUser?.userId);
-            if (!user) {
-                throw new ApiError(400, "users doesn't exists");
-            }
-
-            user.password = password;
-
-            await user.save();
-
-            await TokenReset.findByIdAndDelete(tokenUser?._id);
-
-            return;
-        } catch (error) {
-            next(error);
+        if (!tokenUser) {
+            throw new ApiError(400, "Invalid Token or expiry token!");
         }
 
+
+        const user = await User.findById(tokenUser?.userId);
+        if (!user) {
+            throw new ApiError(400, "users doesn't exists");
+        }
+
+        user.password = password;
+
+        await user.save();
+
+        await TokenReset.findByIdAndDelete(tokenUser?._id);
+
+        return;
 
     }
 
 
     refreshToken = async (token) => {
 
-        try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            if (!decoded) {
-                throw new ApiError(401, "Invalid token");
-            }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (!decoded) {
+            throw new ApiError(401, "Invalid token");
+        }
 
-            const user = await User.findById(decoded?._id);
-            if (!user) {
-                throw new ApiError(401, "Invalid refreshToken!");
-            }
+        const user = await User.findById(decoded?._id);
+        if (!user) {
+            throw new ApiError(401, "Invalid refreshToken!");
+        }
 
-            return {
-                token: user.generateAuthToken()
-            }
-        } catch (error) {
-            next(error);
+        return {
+            token: user.generateAuthToken()
         }
 
     }

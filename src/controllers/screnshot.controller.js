@@ -5,20 +5,28 @@ const screenshotService = require("../services/screenshot.service");
 
 class ScrenshotController {
 
-    uploadScreenshot = asyncHandler(async (req, res) => {
+    uploadScreenshot = asyncHandler(async (req, res, next) => {
 
-        const { sessionId } = req.params;
-        const result = await screenshotService.uploadScreenshot(req?.file, sessionId, req.user?._id);
+        try {
+            const { sessionId } = req.params;
+            const result = await screenshotService.uploadScreenshot(req?.file, sessionId, req.user?._id);
 
-        return res.status(200).json(new ApiResponse(200, "Screenshoot uploaded succesfully!", result));
+            return res.status(200).json(new ApiResponse(200, "Screenshoot uploaded succesfully!", result));
+        } catch (error) {
+            next(error);
+        }
 
     });
 
-    getAllScreenShoot = asyncHandler(async (req, res) => {
+    getAllScreenShoot = asyncHandler(async (req, res, next) => {
 
-        const result = await screenshotService.getAllScreenShoot({ ...req?.params });//session id
+        try {
+            const result = await screenshotService.getAllScreenShoot({ ...req?.params });//session id
 
-        return res.status(200).json(new ApiResponse(200, "All screenshot of this session is fetch succesfully!", result));
+            return res.status(200).json(new ApiResponse(200, "All screenshot of this session is fetch succesfully!", result));
+        } catch (error) {
+            next(error)
+        }
 
     });
 

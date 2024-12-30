@@ -10,7 +10,7 @@ const errorMiddleware = require("./middleware/error.middleware");
 const path = require("path");
 
 // Enable trust proxy to handle 'X-Forwarded-For' headers correctly
-app.set('trust proxy', true);
+app.set('trust proxy', process.env.NODE_ENV === 'production' ? 'loopback, linklocal, uniquelocal' : false);
 // Security middleware
 
 
@@ -24,12 +24,12 @@ app.use(cors({
 }));
 
 // Rate limiting
-// const limiter = rateLimit({
-//     windowMs: process.env.RATE_LIMIT_WINDOW * 60 * 1000,
-//     max: process.env.RATE_LIMIT_MAX
-// });
+const limiter = rateLimit({
+    windowMs: (process.env.RATE_LIMIT_WINDOW || 15) * 60 * 1000,
+    max: process.env.RATE_LIMIT_MAX || 100,
+});
 
-// app.use('/api/', limiter);
+app.use('/api/', limiter);
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
